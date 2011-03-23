@@ -1,5 +1,16 @@
 =head1 Timer::Simple
 
+This is a simple object to make timing an operation as easy as possible.
+
+It uses L<Time::HiRes> if available (unless you tell it not to).
+
+It stringifies to the elapsed time in an hours/minutes/seconds format
+(default is C<00:00:00.000000> with L<Time::HiRes> or C<00:00:00> without).
+
+This module aims to be small and efficient
+and do what is useful in most cases,
+while still offering some configurability to handle edge cases.
+
 See module POD for more information.
 
 =cut
