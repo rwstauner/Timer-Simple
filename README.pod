@@ -1,0 +1,5 @@
+=head1 Timer::Simple
+
+See module POD for more information.
+
+=cut
