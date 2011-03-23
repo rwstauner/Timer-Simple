@@ -6,6 +6,12 @@ use strict;
 use warnings;
 use overload '""' => \&string, fallback => 1; # core
 
+=func HIRES
+
+Indicates whether L<Time::HiRes> is available.
+
+=cut
+
 {
   # only perform the check once, but don't perform the check until required
   my $HIRES;
@@ -15,6 +21,21 @@ use overload '""' => \&string, fallback => 1; # core
     return $HIRES;
   }
 }
+
+=method new
+
+Constructor;  Takes a hash or hashref of arguments:
+
+=for :list
+* C<start> - Boolean; Defaults to true;
+Set this to false to skip the initial setting of the clock.
+You must call L</start> explicitly if you disable this.
+* C<hires> - Boolean; Defaults to true;
+Set this to false to not attempt to use L<Time::HiRes>
+and just use L<time|perlfunc/time> instead.
+* C<format> - Alternate C<sprintf> string; See L</hms>.
+
+=cut
 
 sub new {
   my $class = shift;
@@ -36,6 +57,12 @@ sub new {
   return $self;
 }
 
+=method elapsed
+
+Returns the number of seconds elapsed since the clock was started.
+
+=cut
+
 sub elapsed {
   my ($self) = @_;
 
@@ -55,6 +82,22 @@ sub elapsed {
     : $elapsed - $self->{started};
 }
 
+=method hms
+
+Separates the elapsed time (seconds) into B<h>ours, B<m>inutes, and B<s>econds.
+
+In list context returns a three-element list (hours, minutes, seconds).
+
+In scalar context returns a string resulting from
+L<sprintf|perlfunc/sprintf_FORMAT,_LIST>
+(essentially C<sprintf($format, $h, $m, $s)>).
+An alternate C<format> can be specified in L</new>.
+The default is
+C<00:00:00.000000> (C<%02d:%02d:%9.6f>) with L<Time::HiRes> or
+C<00:00:00> (C<%02d:%02d:%02d>) without.
+
+=cut
+
 sub hms {
   my ($self, $format) = @_;
 
@@ -70,6 +113,14 @@ sub hms {
     : sprintf(($format || $self->{format}), $h, $m, $s);
 }
 
+=method start
+X<restart>
+
+Initializes the timer to the current system time.
+
+Aliased as C<restart>.
+
+=cut
 
 sub start {
   my ($self) = @_;
@@ -80,14 +131,37 @@ sub start {
   $self->{started} = $self->time;
 }
 
+=method stop
+
+Stop the timer.
+This records the current system time in case you'd like to do more
+processing (that you don't want timed) before reporting the elapsed time.
+
+=cut
+
 sub stop {
   my ($self) = @_;
   $self->{stopped} = $self->time;
 }
 
+=method string
+
+Returns the scalar (C<sprintf>) version of L</hms>.
+This is the method called when the object is stringified (using L<overload>).
+
+=cut
+
+# this could be configurable: new(string => 'elapsed') # default 'hms'
 sub string {
   scalar $_[0]->hms;
 }
+
+=method time
+
+Returns the current system time
+using L<Time::HiRes/gettimeofday> or L<time|perlfunc/time>.
+
+=cut
 
 sub time {
   return $_[0]->{hires}
@@ -102,6 +176,8 @@ sub time {
 }
 
 1;
+
+=for :stopwords hms
 
 =head1 SYNOPSIS
 
