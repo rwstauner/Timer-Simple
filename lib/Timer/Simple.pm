@@ -229,6 +229,9 @@ while still offering some configurability to handle edge cases.
 
 =head1 SEE ALSO
 
+These are some other timers I found on CPAN
+and how they differ from this module:
+
 =for :list
 * L<Time::Elapse> - eccentric API to a tied scalar
 * L<Time::Progress> - Doesn't support L<Time::HiRes>
