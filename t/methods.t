@@ -58,11 +58,26 @@ like(scalar $t->hms, qr/^\d{4}-\d{4}-\d+?$/, 'hms w/ object format');
 like(scalar $t->hms('%d_%d_%f'), qr/^\d+_\d+_\d+\.\d+$/, 'hms w/ passed format');
 
 # elapsed, stop
-ok($t->elapsed < eval { nap($t); $t->elapsed }, 'seconds increase');
+ok($t->elapsed <  eval { nap($t); $t->elapsed }, 'seconds increase');
 $t->stop;
 ok($t->elapsed == eval { nap($t); $t->elapsed }, 'seconds stopped');
 
 # string
 is(' ' . $t->hms, " $t", 'stringification');
+
+subtest stop => sub {
+  # test that stop() doesn't call elapsed in void context
+  is($t->stop, $t->elapsed, 'stop returns elapsed');
+  delete $t->{started};
+
+  is(eval { $t->stop }, undef, 'stop calls elapsed');
+  like($@, qr/Timer never started/, 'stop calls elapsed');
+
+  is(eval { $t->stop; 1 }, 1, 'stop in void context does not call elapsed');
+  is($@, '', 'stop in void context does not call elapsed');
+
+  is(eval { $t->stop }, undef, 'stop calls elapsed');
+  like($@, qr/Timer never started/, 'stop calls elapsed');
+};
 
 done_testing;

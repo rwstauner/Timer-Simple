@@ -154,6 +154,9 @@ processing (that you don't want timed) before reporting the elapsed time.
 sub stop {
   my ($self) = @_;
   $self->{stopped} = $self->time;
+  # natural return value would be elapsed() but don't compute it in void context
+  return $self->elapsed
+    if defined wantarray;
 }
 
 =method string
