@@ -45,7 +45,7 @@ sub new {
     @_ == 1 ? %{$_[0]} : @_,
   };
 
-  # float: 9 (width) - 6 (precision) - 1 (dot) == 2 digits (before decimal point)
+  # float: 9 (width) - 6 (precision) - 1 (dot) == 2 digits before decimal point
   $self->{format} ||= '%02d:%02d:'
     . ($self->{hires} ? '%09.6f' : '%02d');
 
@@ -72,7 +72,7 @@ sub elapsed {
     Carp::croak("Timer never started!");
   }
 
-  # if stop() was called use that time, otherwise "now"
+  # if stop() was called, use that time, otherwise "now"
   my $elapsed = defined($self->{stopped})
     ? $self->{stopped}
     : $self->time;
@@ -113,9 +113,10 @@ sub hms {
   my ($self, $format) = @_;
 
   my $s  = $self->elapsed;
-  # find the number of whole hours/minutes, then subtract them
+  # find the number of whole hours, then subtract them
   my $h  = int($s / 3600);
      $s -=     $h * 3600;
+  # find the number of whole minutes, then subtract them
   my $m  = int($s / 60);
      $s -=     $m * 60;
 
@@ -162,8 +163,8 @@ This is the method called when the object is stringified (using L<overload>).
 
 =cut
 
-# this could be configurable: new(string => 'elapsed') # default 'hms'
 sub string {
+  # this could be configurable: new(string => 'elapsed') # default 'hms'
   scalar $_[0]->hms;
 }
 
