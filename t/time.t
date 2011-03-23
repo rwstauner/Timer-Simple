@@ -29,13 +29,13 @@ subtest integer => sub {
 
   elapse(12);
 
-  is($t->seconds,             12,  'expected elapsed time');
+  is($t->elapsed,             12,  'expected elapsed time');
   is(scalar $t->hms,   '00:00:12', 'hms string');
   is_deeply([$t->hms], [0, 0, 12], 'hms list');
 
   elapse(3600 + 120 + 15); # 1h 2m 15s
 
-  is($t->seconds,           3735,  'expected elapsed time');
+  is($t->elapsed,           3735,  'expected elapsed time');
   is(scalar $t->hms,   '01:02:15', 'hms string');
   is_deeply([$t->hms], [1, 2, 15], 'hms list');
 };
@@ -49,13 +49,13 @@ subtest hires => sub {
 
   elapse(12, 345);
 
-  is($t->seconds,             12.345000,  'expected elapsed time');
+  is($t->elapsed,             12.345000,  'expected elapsed time');
   is(scalar $t->hms,   '00:00:12.345000', 'hms string');
   is_deeply([$t->hms], [0, 0, 12.345000], 'hms list');
 
   elapse(3600 + 120 + 15, 987654); # 1h 2m 15s, fraction
 
-  is($t->seconds,           3735.987654,  'expected elapsed time');
+  is($t->elapsed,           3735.987654,  'expected elapsed time');
   is(scalar $t->hms,   '01:02:15.987654', 'hms string');
   is_deeply([$t->hms], [1, 2, 15.987654], 'hms list');
 };

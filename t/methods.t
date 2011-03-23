@@ -14,15 +14,15 @@ sub nap { select(undef, undef, undef, ($_[0]->{hires} ? 0.25 : 2)); }
 my $t = new_ok($mod);
 ok(exists($t->{started}), 'auto start');
 nap($t);
-ok($t->seconds > 0, 'timing');
+ok($t->elapsed > 0, 'timing');
 
 # new, start
 $t = new_ok($mod, [start => 0]);
 ok(!exists($t->{started}), 'no auto start');
-is(eval { $t->seconds; 1 }, undef, 'died without start');
+is(eval { $t->elapsed; 1 }, undef, 'died without start');
 like($@, qr/Timer never started/, 'died without start');
 $t->start;
-is(eval { $t->seconds; 1 }, 1, 'success after timer started');
+is(eval { $t->elapsed; 1 }, 1, 'success after timer started');
 
 SKIP: {
   eval 'require Time::HiRes'
@@ -57,10 +57,10 @@ $t->{format} = '%04d-%04d-%d';
 like(scalar $t->hms, qr/^\d{4}-\d{4}-\d+?$/, 'hms w/ object format');
 like(scalar $t->hms('%d_%d_%f'), qr/^\d+_\d+_\d+\.\d+$/, 'hms w/ passed format');
 
-# seconds, stop
-ok($t->seconds < eval { nap($t); $t->seconds }, 'seconds increase');
+# elapsed, stop
+ok($t->elapsed < eval { nap($t); $t->elapsed }, 'seconds increase');
 $t->stop;
-ok($t->seconds == eval { nap($t); $t->seconds }, 'seconds stopped');
+ok($t->elapsed == eval { nap($t); $t->elapsed }, 'seconds stopped');
 
 # string
 is(' ' . $t->hms, " $t", 'stringification');

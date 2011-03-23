@@ -36,10 +36,29 @@ sub new {
   return $self;
 }
 
+sub elapsed {
+  my ($self) = @_;
+
+  if( !defined($self->{started}) ){
+    # lazy load Carp since this is the only place we use it
+    require Carp; # core
+    Carp::croak("Timer never started!");
+  }
+
+  # if stop() was called use that time, otherwise "now"
+  my $elapsed = defined($self->{stopped})
+    ? $self->{stopped}
+    : $self->time;
+
+  return $self->{hires}
+    ? Time::HiRes::tv_interval($self->{started}, $elapsed)
+    : $elapsed - $self->{started};
+}
+
 sub hms {
   my ($self, $format) = @_;
 
-  my $s  = $self->seconds;
+  my $s  = $self->elapsed;
   # find the number of whole hours/minutes, then subtract them
   my $h  = int($s / 3600);
      $s -=     $h * 3600;
@@ -51,24 +70,6 @@ sub hms {
     : sprintf(($format || $self->{format}), $h, $m, $s);
 }
 
-sub seconds {
-  my ($self) = @_;
-
-  if( !defined($self->{started}) ){
-    # lazy load Carp since this is the only place we use it
-    require Carp; # core
-    Carp::croak("Timer never started!");
-  }
-
-  # if stop() was called use that time, otherwise "now"
-  my $seconds = defined($self->{stopped})
-    ? $self->{stopped}
-    : $self->time;
-
-  return $self->{hires}
-    ? Time::HiRes::tv_interval($self->{started}, $seconds)
-    : $seconds - $self->{started};
-}
 
 sub start {
   my ($self) = @_;
@@ -98,7 +99,6 @@ sub time {
   # aliases
   no warnings 'once';
   *restart = \&start;
-  *elapsed = \&seconds;
 }
 
 1;
