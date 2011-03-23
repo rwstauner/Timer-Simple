@@ -105,6 +105,46 @@ sub time {
 
 =head1 SYNOPSIS
 
+  use Timer::Simple ();
+  my $t = Timer::Simple->new();
+  do_something;
+  print "something took: $t\n";
+
+  # or take more control
+
+  my $timer = Timer::Simple->new(start => 0);
+    do_something_before;
+  $timer->start;
+    do_something_else;
+  print "time so far: ", $t->elapsed, " seconds\n";
+    do_a_little_more;
+  print "time so far: ", $t->elapsed, " seconds\n";
+    do_still_more;
+  $timer->stop;
+    do_something_after;
+  printf "whole process lasted %d hours %d minutes %f seconds\n", $t->hms;
+
+  $timer->restart; # use the same object to time something else
+
 =head1 DESCRIPTION
+
+This is a simple object to make timing an operation as easy as possible.
+
+It uses L<Time::HiRes> if available (unless you tell it not to).
+
+It stringifies to the elapsed time in an hours/minutes/seconds format
+(default is C<00:00:00.000000> with L<Time::HiRes> or C<00:00:00> without).
+
+This module aims to be small and efficient
+and do what is useful in most cases,
+while still offering some configurability to handle edge cases.
+
+=head1 SEE ALSO
+
+=for :list
+* L<Time::Elapse> - eccentric API to a tied scalar
+* L<Time::Progress> - Doesn't support L<Time::HiRes>
+* L<Time::StopWatch> - tied scalar
+* L<Dancer::Timer> - inside Dancer framework
 
 =cut
