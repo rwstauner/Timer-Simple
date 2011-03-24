@@ -61,6 +61,7 @@ like(scalar $t->hms('%d_%d_%f'), qr/^\d+_\d+_\d+\.\d+$/, 'hms w/ passed format')
 ok($t->elapsed <  eval { nap($t); $t->elapsed }, 'seconds increase');
 $t->stop;
 ok($t->elapsed == eval { nap($t); $t->elapsed }, 'seconds stopped');
+is($t->stop, do { nap($t); $t->stop }, 'stop only once');
 
 # string
 is(' ' . $t->hms, " $t", 'stringification');

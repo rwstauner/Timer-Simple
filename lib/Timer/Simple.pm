@@ -136,7 +136,9 @@ processing (that you don't want timed) before reporting the elapsed time.
 
 sub stop {
   my ($self) = @_;
-  $self->{stopped} = $self->time;
+  $self->{stopped} = $self->time
+    # don't change the clock if it's already stopped
+    if !defined($self->{stopped});
   # natural return value would be elapsed() but don't compute it in void context
   return $self->elapsed
     if defined wantarray;
