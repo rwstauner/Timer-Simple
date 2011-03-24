@@ -88,7 +88,7 @@ Separates the elapsed time (seconds) into B<h>ours, B<m>inutes, and B<s>econds.
 In list context returns a three-element list (hours, minutes, seconds).
 
 In scalar context returns a string resulting from
-L<sprintf|perlfunc/sprintf_FORMAT,_LIST>
+C<sprintf>
 (essentially C<sprintf($format, $h, $m, $s)>).
 The default format is
 C<00:00:00.000000> (C<%02d:%02d:%9.6f>) with L<Time::HiRes> or
