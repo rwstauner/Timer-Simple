@@ -4,7 +4,10 @@ package Timer::Simple;
 
 use strict;
 use warnings;
-use overload '""' => \&string, fallback => 1; # core
+use overload # core
+  '""' => \&string,
+  '0+' => \&elapsed,
+  fallback => 1;
 
 =func HIRES
 
@@ -60,6 +63,10 @@ sub new {
 =method elapsed
 
 Returns the number of seconds elapsed since the clock was started.
+
+This method is used as the object's value when used in numeric context:
+
+  $total_elapsed = $timer1 + $timer2;
 
 =cut
 
