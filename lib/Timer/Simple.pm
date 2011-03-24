@@ -75,13 +75,14 @@ sub elapsed {
 
   # list
   my @units = $timer->hms;
+
   sprintf("%d hours %minutes %f seconds", $timer->hms);
 
   # scalar
   print "took: " . $timer->hms . "\n"; # same as print "took :$timer\n";
 
   # alternate format
-  $string = $timer->hms('%04dh %04dm %020.10f');
+  $string = $timer->hms('%04d h %04d m %020.10f s');
 
 Separates the elapsed time (seconds) into B<h>ours, B<m>inutes, and B<s>econds.
 
