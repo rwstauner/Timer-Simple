@@ -9,22 +9,6 @@ use overload # core
   '0+' => \&elapsed,
   fallback => 1;
 
-=func HIRES
-
-Indicates whether L<Time::HiRes> is available.
-
-=cut
-
-{
-  # only perform the check once, but don't perform the check until required
-  my $HIRES;
-  sub HIRES () {
-    $HIRES = (do { local $@; eval { require Time::HiRes; 1; } } || '')
-      if !defined($HIRES);
-    return $HIRES;
-  }
-}
-
 =method new
 
 Constructor;  Takes a hash or hashref of arguments:
@@ -44,13 +28,11 @@ sub new {
   my $class = shift;
   my $self = {
     start => 1,
-    hires => HIRES,
+    hires => HIRES(),
     @_ == 1 ? %{$_[0]} : @_,
   };
 
-  # float: 9 (width) - 6 (precision) - 1 (dot) == 2 digits before decimal point
-  $self->{format} ||= '%02d:%02d:'
-    . ($self->{hires} ? '%09.6f' : '%02d');
+  $self->{format} ||= default_format_spec($self->{hires});
 
   bless $self, $class;
 
@@ -119,13 +101,7 @@ or can be passed as an argument to the method.
 sub hms {
   my ($self, $format) = @_;
 
-  my $s  = $self->elapsed;
-  # find the number of whole hours, then subtract them
-  my $h  = int($s / 3600);
-     $s -=     $h * 3600;
-  # find the number of whole minutes, then subtract them
-  my $m  = int($s / 60);
-     $s -=     $m * 60;
+  my ($h, $m, $s) = separate_hms($self->elapsed);
 
   return wantarray
     ? ($h, $m, $s)
@@ -197,6 +173,93 @@ sub time {
   *restart = \&start;
 }
 
+# package functions
+
+=head1 FUNCTIONS
+
+The following functions should not be necessary in most circumstances
+but are provided for convenience to facilitate additional functionality.
+
+They are not available for export (to avoid L<Exporter> overhead).
+See L<Sub::Import> if you really want to import these methods.
+
+=func HIRES
+
+Indicates whether L<Time::HiRes> is available.
+
+=cut
+
+{
+  # only perform the check once, but don't perform the check until required
+  my $HIRES;
+  sub HIRES () {
+    $HIRES = (do { local $@; eval { require Time::HiRes; 1; } } || '')
+      if !defined($HIRES);
+    return $HIRES;
+  }
+}
+
+=func default_format_spec
+
+  $spec            = default_format_spec();  # consults HIRES()
+  $spec_whole      = default_format_spec(0); # false forces integer
+  $spec_fractional = default_format_spec(1); # true  forces fraction
+
+Returns an appropriate C<sprintf> format spec according to the provided boolean.
+If true,  the spec forces fractional seconds (floating point (C<%f>)).
+If false, the spec forces seconds to an integer (whole number (C<%d>)).
+If not specified the value of L</HIRES> will be used.
+
+=cut
+
+sub default_format_spec {
+  my ($fractional) = @_ ? @_ : HIRES();
+  # float: 9 (width) - 6 (precision) - 1 (dot) == 2 digits before decimal point
+  return '%02d:%02d:' . ($fractional ? '%09.6f' : '%02d');
+}
+
+=func format_hms
+
+  my $string = format_hms($hours, $minutes, $seconds);
+  my $string = format_hms($seconds);
+
+Format the provided hours, minutes, and seconds
+into a string by guessing the best format.
+
+If only seconds are provided
+the value will be passed through L</separate_hms> first.
+
+=cut
+
+sub format_hms {
+  # if only one argument was provided assume its seconds and split it
+  my ($h, $m, $s) = (@_ == 1 ? separate_hms(@_) : @_);
+
+  return sprintf(default_format_spec(int($s) != $s), $h, $m, $s);
+}
+
+=func separate_hms
+
+  my ($hours, $minutes, $seconds) = separate_hms($seconds);
+
+Separate seconds into hours, minutes, and seconds.
+Returns a list.
+
+=cut
+
+sub separate_hms {
+  my ($s)  = @_;
+
+  # find the number of whole hours, then subtract them
+  my $h  = int($s / 3600);
+     $s -=     $h * 3600;
+  # find the number of whole minutes, then subtract them
+  my $m  = int($s / 60);
+     $s -=     $m * 60;
+
+  return ($h, $m, $s);
+}
+
 1;
 
 =for :stopwords hms
@@ -223,6 +286,19 @@ sub time {
   printf "whole process lasted %d hours %d minutes %f seconds\n", $t->hms;
 
   $timer->restart; # use the same object to time something else
+
+  # you can use package functions to work with mutliple timers
+
+  $timer1 = Timer::Simple->new;
+    do_stuff;
+  $timer1->stop;
+    do_more;
+  $timer2 = Timer::Simple->new;
+    do_more_stuff;
+  $timer2->stop;
+
+  print "first process took $timer1, second process took: $timer2\n";
+  print "in total took: " . Timer::Simple::format_hms($timer1 + $timer2);
 
 =head1 DESCRIPTION
 
