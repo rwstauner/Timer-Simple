@@ -2,6 +2,13 @@ Revision history for Timer-Simple
 
 {{$NEXT}}
 
+1.003 2011-03-24
+
+  - 'string' attribute to new() sets default format for string() method
+    (customizable stringification)
+  - Default stringifcation changed from 'hms' to new 'short' format
+  - Deprecate 'format' attribute; Use 'hms' instead
+
 1.002 2011-03-23
 
   - fix bug of adjusting the clock when calling stop() mutliple times
