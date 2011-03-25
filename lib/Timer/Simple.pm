@@ -21,7 +21,7 @@ You must call L</start> explicitly if you disable this.
 * C<hires> - Boolean; Defaults to true;
 Set this to false to not attempt to use L<Time::HiRes>
 and just use L<time|perlfunc/time> instead.
-* C<format> - Alternate C<sprintf> string; See L</hms>.
+* C<hms> - Alternate C<sprintf> string used by L</hms>
 
 =cut
 
@@ -33,7 +33,11 @@ sub new {
     @_ == 1 ? %{$_[0]} : @_,
   };
 
-  $self->{format} ||= default_format_spec($self->{hires});
+  if( $self->{format} ){
+    carp("$class option 'format' is deprecated.  Use 'hms' (or 'string')");
+    $self->{hms} ||= delete $self->{format};
+  }
+  $self->{hms} ||= default_format_spec($self->{hires});
 
   bless $self, $class;
 
@@ -105,7 +109,7 @@ sub hms {
 
   return wantarray
     ? ($h, $m, $s)
-    : sprintf(($format || $self->{format}), $h, $m, $s);
+    : sprintf(($format || $self->{hms}), $h, $m, $s);
 }
 
 =method start

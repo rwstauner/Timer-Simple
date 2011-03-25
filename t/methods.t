@@ -53,7 +53,7 @@ my @hms = $t->hms;
 is(scalar @hms, 3, 'got hours, minutes, and seconds in list context');
 
 like(scalar $t->hms, qr/^\d{2}:\d{2}:\d{2}(\.\d+)?$/, 'default hms');
-$t->{format} = '%04d-%04d-%d';
+$t->{hms} = '%04d-%04d-%d';
 like(scalar $t->hms, qr/^\d{4}-\d{4}-\d+?$/, 'hms w/ object format');
 like(scalar $t->hms('%d_%d_%f'), qr/^\d+_\d+_\d+\.\d+$/, 'hms w/ passed format');
 
