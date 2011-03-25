@@ -22,6 +22,7 @@ and just use L<time|perlfunc/time> instead.
 * C<start> - Boolean; Defaults to true;
 Set this to false to skip the initial setting of the clock.
 You must call L</start> explicitly if you disable this.
+* C<string> - The default format for L</string>. Defaults to C<'short'>;
 
 =cut
 
@@ -29,6 +30,7 @@ sub new {
   my $class = shift;
   my $self = {
     start => 1,
+    string => 'short',
     hires => HIRES(),
     @_ == 1 ? %{$_[0]} : @_,
   };
@@ -150,14 +152,55 @@ sub stop {
 
 =method string
 
-Returns the scalar (C<sprintf>) version of L</hms>.
+  print $timer->string($format);
+
+  print "took: $timer";  # stringification equivalent to $timer->string()
+
+Returns a string representation of the elapsed time.
+
+The format can be passed as an argument.  If no format is provided
+the value of C<string> (passed to L</new>) will be used.
+
+The format can be the name of another method (which will be called),
+a subroutine (coderef) which will be called like an object method,
+or one of the following strings:
+
+=for :list
+* C<short> - Total elapsed seconds followed by C<hms>: C<'123s (00:02:03)'>
+* C<human> - Separate units spelled out: C<'6 hours 4 minutes 12 seconds'>
+* C<full> - Total elapsed seconds plus C<human>: C<'2 seconds (0 hours 0 minutes 2 seconds)'>
+
 This is the method called when the object is stringified (using L<overload>).
 
 =cut
 
 sub string {
-  # this could be configurable: new(string => 'elapsed') # default 'hms'
-  scalar $_[0]->hms;
+  my ($self, $format) = @_;
+  $format ||= $self->{string};
+
+  # if it's a method name or a coderef delegate to it
+  return scalar $self->$format()
+    if $self->can($format)
+      || ref($format) eq 'CODE'
+      || overload::Method($format, '&{}');
+
+  # cache the time so that all formats show the same (in case it isn't stopped)
+  my $seconds = $self->elapsed;
+
+  my $string;
+  if( $format eq 'short' ){
+    $string = sprintf('%ss (' . $self->{hms} . ')', $seconds, separate_hms($seconds));
+  }
+  elsif( $format =~ /human|full/ ){
+    # human
+    $string = sprintf('%d hours %d minutes %s seconds', separate_hms($seconds));
+    $string = $seconds . ' seconds (' . $string . ')'
+      if $format eq 'full';
+  }
+  else {
+    croak("Unknown format: $format");
+  }
+  return $string;
 }
 
 =method time
@@ -279,7 +322,7 @@ sub separate_hms {
 
   # or take more control
 
-  my $timer = Timer::Simple->new(start => 0);
+  my $timer = Timer::Simple->new(start => 0, string => 'human');
     do_something_before;
   $timer->start;
     do_something_else;
@@ -290,6 +333,7 @@ sub separate_hms {
   $timer->stop;
     do_something_after;
   printf "whole process lasted %d hours %d minutes %f seconds\n", $t->hms;
+    # or simply "whole process lasted $t\n" with 'string' => 'human'
 
   $timer->restart; # use the same object to time something else
 
