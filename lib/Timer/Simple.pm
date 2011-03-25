@@ -15,13 +15,13 @@ use overload # core
 Constructor;  Takes a hash or hashref of arguments:
 
 =for :list
-* C<start> - Boolean; Defaults to true;
-Set this to false to skip the initial setting of the clock.
-You must call L</start> explicitly if you disable this.
 * C<hires> - Boolean; Defaults to true;
 Set this to false to not attempt to use L<Time::HiRes>
 and just use L<time|perlfunc/time> instead.
 * C<hms> - Alternate C<sprintf> string used by L</hms>
+* C<start> - Boolean; Defaults to true;
+Set this to false to skip the initial setting of the clock.
+You must call L</start> explicitly if you disable this.
 
 =cut
 
