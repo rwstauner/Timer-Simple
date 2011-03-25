@@ -212,8 +212,8 @@ Indicates whether L<Time::HiRes> is available.
   $spec_fractional = default_format_spec(1); # true  forces fraction
 
 Returns an appropriate C<sprintf> format spec according to the provided boolean.
-If true,  the spec forces fractional seconds (floating point (C<%f>)).
-If false, the spec forces seconds to an integer (whole number (C<%d>)).
+If true,  the spec forces fractional seconds (like C<'00:00:00.000000'>).
+If false, the spec forces seconds to an integer (like C<'00:00:00'>).
 If not specified the value of L</HIRES> will be used.
 
 =cut
@@ -312,12 +312,11 @@ This is a simple object to make timing an operation as easy as possible.
 
 It uses L<Time::HiRes> if available (unless you tell it not to).
 
-It stringifies to the elapsed time in an hours/minutes/seconds format
-(default is C<00:00:00.000000> with L<Time::HiRes> or C<00:00:00> without).
+It stringifies to the elapsed time (see L</string>).
 
 This module aims to be small and efficient
-and do what is useful in most cases,
-while still offering some configurability to handle edge cases.
+and do what is useful in most cases
+while also being sufficiently customizable.
 
 =head1 SEE ALSO
 
