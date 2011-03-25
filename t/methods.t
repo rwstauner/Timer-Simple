@@ -56,6 +56,10 @@ like(scalar $t->hms, qr/^\d{2}:\d{2}:\d{2}(\.\d+)?$/, 'default hms');
 $t->{hms} = '%04d-%04d-%d';
 like(scalar $t->hms, qr/^\d{4}-\d{4}-\d+?$/, 'hms w/ object format');
 like(scalar $t->hms('%d_%d_%f'), qr/^\d+_\d+_\d+\.\d+$/, 'hms w/ passed format');
+# format changed above
+like($t->string('short'), qr/\d+(\.\d+)?s \(\d+-\d+-\d+(\.\d+)?\)/, 'string(short)');
+
+$t = new_ok($mod); # back to defaults
 
 # elapsed, stop
 ok($t->elapsed <  eval { nap($t); $t->elapsed }, 'seconds increase');
@@ -63,8 +67,27 @@ $t->stop;
 ok($t->elapsed == eval { nap($t); $t->elapsed }, 'seconds stopped');
 is($t->stop, do { nap($t); $t->stop }, 'stop only once');
 
-# string
+# string()
+$t->{string} = 'hms';
 is(' ' . $t->hms, " $t", 'stringification');
+$t->{string} = 'elapsed';
+is(' ' . $t->elapsed, " $t", 'stringification');
+$t->{string} = 'short';
+is(' ' . $t->string('short'), " $t", 'stringification');
+$t->{string} = sub { ref($_[0]) };
+is(" $mod", " $t", 'stringification');
+
+# string(format)
+foreach my $test (
+  [elapsed => qr/^\d+(\.\d+)?$/],
+  [hms     => qr/^\d+:\d+:\d+(\.\d+)?$/],
+  [short   => qr/^\d+(\.\d+)?s \(\d+:\d+:\d+(\.\d+)?\)$/],
+  [human   => qr/^\d+ hours \d+ minutes \d+(\.\d+)? seconds$/],
+  [full    => qr/^\d+(\.\d+)? seconds \(\d+ hours \d+ minutes \d+(\.\d+)? seconds\)$/],
+){
+  my ($format, $exp) = @$test;
+  like($t->string($format), $exp, "string($format)");
+}
 
 subtest stop => sub {
   # test that stop() doesn't call elapsed in void context

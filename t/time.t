@@ -38,6 +38,7 @@ subtest integer => sub {
   is($t->elapsed,           3735,  'expected elapsed time');
   is(scalar $t->hms,   '01:02:15', 'hms string');
   is_deeply([$t->hms], [1, 2, 15], 'hms list');
+  is($t->string, '3735s (01:02:15)', 'string');
 
   is(Timer::Simple::format_hms($t + 12), '01:02:27', 'format_hms');
 };
@@ -60,6 +61,7 @@ subtest hires => sub {
   is($t->elapsed,           3735.987654,  'expected elapsed time');
   is(scalar $t->hms,   '01:02:15.987654', 'hms string');
   is_deeply([$t->hms], [1, 2, 15.987654], 'hms list');
+  is($t->string, '3735.987654s (01:02:15.987654)', 'string');
 
   is(Timer::Simple::format_hms($t + 12), '01:02:27.987654', 'format_hms');
 };
