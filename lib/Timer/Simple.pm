@@ -4,6 +4,7 @@ package Timer::Simple;
 
 use strict;
 use warnings;
+use Carp qw(croak carp); # core
 use overload # core
   '""' => \&string,
   '0+' => \&elapsed,
@@ -56,9 +57,7 @@ sub elapsed {
   my ($self) = @_;
 
   if( !defined($self->{started}) ){
-    # lazy load Carp since this is the only place we use it
-    require Carp; # core
-    Carp::croak("Timer never started!");
+    croak("Timer never started!");
   }
 
   # if stop() was called, use that time, otherwise "now"
