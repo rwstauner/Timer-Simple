@@ -2,6 +2,8 @@ Revision history for Timer-Simple
 
 {{$NEXT}}
 
+  - Superficial dist/release changes
+
 1.003 2011-03-24
 
   - 'string' attribute to new() sets default format for string() method
