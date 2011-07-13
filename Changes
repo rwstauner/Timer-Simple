@@ -4,21 +4,21 @@ Revision history for Timer-Simple
 
   - Superficial dist/release changes
 
-1.003 2011-03-24
+1.003     2011-03-25T01:56:38Z
 
   - 'string' attribute to new() sets default format for string() method
     (customizable stringification)
   - Default stringifcation changed from 'hms' to new 'short' format
   - Deprecate 'format' attribute; Use 'hms' instead
 
-1.002 2011-03-23
+1.002     2011-03-24T00:40:28Z
 
   - fix bug of adjusting the clock when calling stop() mutliple times
 
-1.001 2011-03-23
+1.001     2011-03-24T00:35:59Z
   - Overload numeric context (evaluates to elapsed())
   - Provide package functions for working with multiple timers
 
-1.000 2011-03-23
+1.000     2011-03-24T00:19:07Z
 
   - Initial version
