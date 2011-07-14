@@ -314,6 +314,10 @@ sub separate_hms {
 
 =for :stopwords hms
 
+=for test_synopsis
+my ( $timer1, $timer2 );
+no strict 'subs';
+
 =head1 SYNOPSIS
 
   use Timer::Simple ();
