@@ -1,9 +1,10 @@
 # vim: set sw=2 sts=2 ts=2 expandtab smarttab:
+use strict;
+use warnings;
+
 package Timer::Simple;
 # ABSTRACT: Small, simple timer (stopwatch) object
 
-use strict;
-use warnings;
 use Carp qw(croak carp); # core
 use overload # core
   '""' => \&string,
