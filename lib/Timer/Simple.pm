@@ -242,7 +242,7 @@ Indicates whether L<Time::HiRes> is available.
 {
   # only perform the check once, but don't perform the check until required
   my $HIRES;
-  sub HIRES () {
+  sub HIRES () {  ## no critic Prototypes
     $HIRES = (do { local $@; eval { require Time::HiRes; 1; } } || '')
       if !defined($HIRES);
     return $HIRES;
