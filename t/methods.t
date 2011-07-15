@@ -14,7 +14,8 @@ sub nap { select(undef, undef, undef, ($_[0]->{hires} ? 0.25 : 2)); }
 my $t = new_ok($mod);
 ok(exists($t->{started}), 'auto start');
 nap($t);
-ok($t->elapsed > 0, 'timing');
+ok($t->elapsed > 0, 'timing')
+  or diag explain $t;
 
 # new, start
 $t = new_ok($mod, [start => 0]);

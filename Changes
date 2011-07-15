@@ -2,6 +2,7 @@ Revision history for Timer-Simple
 
 {{$NEXT}}
 
+  - Add some debug output for a smoke test failure
   - Superficial dist/release changes
 
 1.003     2011-03-25T01:56:38Z
