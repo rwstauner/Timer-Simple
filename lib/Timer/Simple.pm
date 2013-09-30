@@ -192,6 +192,11 @@ sub string {
   if( $format eq 'short' ){
     $string = sprintf('%ss (' . $self->{hms} . ')', $seconds, separate_hms($seconds));
   }
+  elsif( $format eq 'rps' ){
+    my $elapsed = sprintf '%f', $seconds;
+    my $rps     = $elapsed == 0 ? '??' : sprintf '%.3f', 1 / $elapsed;
+    $string = "${elapsed}s ($rps/s)";
+  }
   elsif( $format =~ /human|full/ ){
     # human
     $string = sprintf('%d hours %d minutes %s seconds', separate_hms($seconds));
