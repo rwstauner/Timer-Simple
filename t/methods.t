@@ -85,6 +85,7 @@ foreach my $test (
   [short   => qr/^\d+(\.\d+)?s \(\d+:\d+:\d+(\.\d+)?\)$/],
   [human   => qr/^\d+ hours \d+ minutes \d+(\.\d+)? seconds$/],
   [full    => qr/^\d+(\.\d+)? seconds \(\d+ hours \d+ minutes \d+(\.\d+)? seconds\)$/],
+  [rps     => qr/^\d+(\.\d+)?s \(\d+(\.\d+)?\/s\)$/],
 ){
   my ($format, $exp) = @$test;
   like($t->string($format), $exp, "string($format)");
