@@ -2,6 +2,9 @@ Revision history for Timer-Simple
 
 {{$NEXT}}
 
+  - Add 'rps' format to show possible requests per second ('4.743616s (0.211/s)').
+    Thanks Tomohiro Hosaka!
+
 1.004     2011-07-15T00:32:30Z
 
   - Add some debug output for a smoke test failure

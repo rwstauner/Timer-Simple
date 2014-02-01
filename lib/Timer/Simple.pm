@@ -168,6 +168,7 @@ or one of the following strings:
 
 =for :list
 * C<short> - Total elapsed seconds followed by C<hms>: C<'123s (00:02:03)'>
+* C<rps> - Total elapsed seconds followed by requests per second: C<'4.743616s (0.211/s)'>
 * C<human> - Separate units spelled out: C<'6 hours 4 minutes 12 seconds'>
 * C<full> - Total elapsed seconds plus C<human>: C<'2 seconds (0 hours 0 minutes 2 seconds)'>
 
