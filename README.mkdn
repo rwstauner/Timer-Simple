@@ -1,0 +1,248 @@
+# NAME
+
+Timer::Simple - Small, simple timer (stopwatch) object
+
+# VERSION
+
+version 1.005
+
+# SYNOPSIS
+
+    use Timer::Simple ();
+    my $t = Timer::Simple->new();
+    do_something;
+    print "something took: $t\n";
+
+    # or take more control
+
+    my $timer = Timer::Simple->new(start => 0, string => 'human');
+      do_something_before;
+    $timer->start;
+      do_something_else;
+    print "time so far: ", $t->elapsed, " seconds\n";
+      do_a_little_more;
+    print "time so far: ", $t->elapsed, " seconds\n";
+      do_still_more;
+    $timer->stop;
+      do_something_after;
+    printf "whole process lasted %d hours %d minutes %f seconds\n", $t->hms;
+      # or simply "whole process lasted $t\n" with 'string' => 'human'
+
+    $timer->restart; # use the same object to time something else
+
+    # you can use package functions to work with mutliple timers
+
+    $timer1 = Timer::Simple->new;
+      do_stuff;
+    $timer1->stop;
+      do_more;
+    $timer2 = Timer::Simple->new;
+      do_more_stuff;
+    $timer2->stop;
+
+    print "first process took $timer1, second process took: $timer2\n";
+    print "in total took: " . Timer::Simple::format_hms($timer1 + $timer2);
+
+# DESCRIPTION
+
+This is a simple object to make timing an operation as easy as possible.
+
+It uses [Time::HiRes](https://metacpan.org/pod/Time::HiRes) if available (unless you tell it not to).
+
+It stringifies to the elapsed time (see ["string"](#string)).
+
+This module aims to be small and efficient
+and do what is useful in most cases
+while also being sufficiently customizable.
+
+# METHODS
+
+## new
+
+Constructor;  Takes a hash or hashref of arguments:
+
+- `hires` - Boolean; Defaults to true;
+
+    Set this to false to not attempt to use [Time::HiRes](https://metacpan.org/pod/Time::HiRes)
+    and just use [time](https://metacpan.org/pod/perlfunc#time) instead.
+
+- `hms` - Alternate `sprintf` string used by ["hms"](#hms)
+- `start` - Boolean; Defaults to true;
+
+    Set this to false to skip the initial setting of the clock.
+    You must call ["start"](#start) explicitly if you disable this.
+
+- `string` - The default format for ["string"](#string). Defaults to `'short'`;
+
+## elapsed
+
+Returns the number of seconds elapsed since the clock was started.
+
+This method is used as the object's value when used in numeric context:
+
+    $total_elapsed = $timer1 + $timer2;
+
+## hms
+
+    # list
+    my @units = $timer->hms;
+
+    sprintf("%d hours %minutes %f seconds", $timer->hms);
+
+    # scalar
+    print "took: " . $timer->hms . "\n"; # same as print "took :$timer\n";
+
+    # alternate format
+    $string = $timer->hms('%04d h %04d m %020.10f s');
+
+Separates the elapsed time (seconds) into __h__ours, __m__inutes, and __s__econds.
+
+In list context returns a three-element list (hours, minutes, seconds).
+
+In scalar context returns a string resulting from
+`sprintf`
+(essentially `sprintf($format, $h, $m, $s)`).
+The default format is
+`00:00:00.000000` (`%02d:%02d:%9.6f`) with [Time::HiRes](https://metacpan.org/pod/Time::HiRes) or
+`00:00:00` (`%02d:%02d:%02d`) without.
+An alternate `format` can be specified in ["new"](#new)
+or can be passed as an argument to the method.
+
+## start
+
+
+Initializes the timer to the current system time.
+
+Aliased as `restart`.
+
+## stop
+
+Stop the timer.
+This records the current system time in case you'd like to do more
+processing (that you don't want timed) before reporting the elapsed time.
+
+## string
+
+    print $timer->string($format);
+
+    print "took: $timer";  # stringification equivalent to $timer->string()
+
+Returns a string representation of the elapsed time.
+
+The format can be passed as an argument.  If no format is provided
+the value of `string` (passed to ["new"](#new)) will be used.
+
+The format can be the name of another method (which will be called),
+a subroutine (coderef) which will be called like an object method,
+or one of the following strings:
+
+- `short` - Total elapsed seconds followed by `hms`: `'123s (00:02:03)'`
+- `rps` - Total elapsed seconds followed by requests per second: `'4.743616s (0.211/s)'`
+- `human` - Separate units spelled out: `'6 hours 4 minutes 12 seconds'`
+- `full` - Total elapsed seconds plus `human`: `'2 seconds (0 hours 0 minutes 2 seconds)'`
+
+This is the method called when the object is stringified (using [overload](https://metacpan.org/pod/overload)).
+
+## time
+
+Returns the current system time
+using ["gettimeofday" in Time::HiRes](https://metacpan.org/pod/Time::HiRes#gettimeofday) or [time](https://metacpan.org/pod/perlfunc#time).
+
+# FUNCTIONS
+
+## HIRES
+
+Indicates whether [Time::HiRes](https://metacpan.org/pod/Time::HiRes) is available.
+
+## default\_format\_spec
+
+    $spec            = default_format_spec();  # consults HIRES()
+    $spec_whole      = default_format_spec(0); # false forces integer
+    $spec_fractional = default_format_spec(1); # true  forces fraction
+
+Returns an appropriate `sprintf` format spec according to the provided boolean.
+If true,  the spec forces fractional seconds (like `'00:00:00.000000'`).
+If false, the spec forces seconds to an integer (like `'00:00:00'`).
+If not specified the value of ["HIRES"](#hires) will be used.
+
+## format\_hms
+
+    my $string = format_hms($hours, $minutes, $seconds);
+    my $string = format_hms($seconds);
+
+Format the provided hours, minutes, and seconds
+into a string by guessing the best format.
+
+If only seconds are provided
+the value will be passed through ["separate\_hms"](#separate_hms) first.
+
+## separate\_hms
+
+    my ($hours, $minutes, $seconds) = separate_hms($seconds);
+
+Separate seconds into hours, minutes, and seconds.
+Returns a list.
+
+# FUNCTIONS
+
+The following functions should not be necessary in most circumstances
+but are provided for convenience to facilitate additional functionality.
+
+They are not available for export (to avoid [Exporter](https://metacpan.org/pod/Exporter) overhead).
+See [Sub::Import](https://metacpan.org/pod/Sub::Import) if you really want to import these methods.
+
+# SEE ALSO
+
+These are some other timers I found on CPAN
+and how they differ from this module:
+
+- [Time::Elapse](https://metacpan.org/pod/Time::Elapse) - eccentric API to a tied scalar
+- [Time::Progress](https://metacpan.org/pod/Time::Progress) - Doesn't support [Time::HiRes](https://metacpan.org/pod/Time::HiRes)
+- [Time::StopWatch](https://metacpan.org/pod/Time::StopWatch) - tied scalar
+- [Dancer::Timer](https://metacpan.org/pod/Dancer::Timer) - inside Dancer framework
+
+# SUPPORT
+
+## Perldoc
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Timer::Simple
+
+## Websites
+
+The following websites have more information about this module, and may be of help to you. As always,
+in addition to those websites please use your favorite search engine to discover more resources.
+
+- MetaCPAN
+
+    A modern, open-source CPAN search engine, useful to view POD in HTML format.
+
+    [http://metacpan.org/release/Timer-Simple](http://metacpan.org/release/Timer-Simple)
+
+## Bugs / Feature Requests
+
+Please report any bugs or feature requests by email to `bug-timer-simple at rt.cpan.org`, or through
+the web interface at [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Timer-Simple](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Timer-Simple). You will be automatically notified of any
+progress on the request by the system.
+
+## Source Code
+
+[https://github.com/rwstauner/Timer-Simple](https://github.com/rwstauner/Timer-Simple)
+
+    git clone https://github.com/rwstauner/Timer-Simple.git
+
+# AUTHOR
+
+Randy Stauner <rwstauner@cpan.org>
+
+# CONTRIBUTOR
+
+Tomohiro Hosaka <bokutin@bokut.in>
+
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Randy Stauner.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
