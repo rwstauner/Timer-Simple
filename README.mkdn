@@ -4,7 +4,7 @@ Timer::Simple - Small, simple timer (stopwatch) object
 
 # VERSION
 
-version 1.005
+version 1.006
 
 # SYNOPSIS
 
@@ -95,7 +95,7 @@ This method is used as the object's value when used in numeric context:
     # alternate format
     $string = $timer->hms('%04d h %04d m %020.10f s');
 
-Separates the elapsed time (seconds) into __h__ours, __m__inutes, and __s__econds.
+Separates the elapsed time (seconds) into **h**ours, **m**inutes, and **s**econds.
 
 In list context returns a three-element list (hours, minutes, seconds).
 
@@ -150,6 +150,12 @@ using ["gettimeofday" in Time::HiRes](https://metacpan.org/pod/Time::HiRes#getti
 
 # FUNCTIONS
 
+The following functions should not be necessary in most circumstances
+but are provided for convenience to facilitate additional functionality.
+
+They are not available for export (to avoid [Exporter](https://metacpan.org/pod/Exporter) overhead).
+See [Sub::Import](https://metacpan.org/pod/Sub::Import) if you really want to import these methods.
+
 ## HIRES
 
 Indicates whether [Time::HiRes](https://metacpan.org/pod/Time::HiRes) is available.
@@ -183,14 +189,6 @@ the value will be passed through ["separate\_hms"](#separate_hms) first.
 Separate seconds into hours, minutes, and seconds.
 Returns a list.
 
-# FUNCTIONS
-
-The following functions should not be necessary in most circumstances
-but are provided for convenience to facilitate additional functionality.
-
-They are not available for export (to avoid [Exporter](https://metacpan.org/pod/Exporter) overhead).
-See [Sub::Import](https://metacpan.org/pod/Sub::Import) if you really want to import these methods.
-
 # SEE ALSO
 
 These are some other timers I found on CPAN
@@ -198,7 +196,7 @@ and how they differ from this module:
 
 - [Time::Elapse](https://metacpan.org/pod/Time::Elapse) - eccentric API to a tied scalar
 - [Time::Progress](https://metacpan.org/pod/Time::Progress) - Doesn't support [Time::HiRes](https://metacpan.org/pod/Time::HiRes)
-- [Time::StopWatch](https://metacpan.org/pod/Time::StopWatch) - tied scalar
+- [Time::Stopwatch](https://metacpan.org/pod/Time::Stopwatch) - tied scalar
 - [Dancer::Timer](https://metacpan.org/pod/Dancer::Timer) - inside Dancer framework
 
 # SUPPORT
@@ -223,7 +221,7 @@ in addition to those websites please use your favorite search engine to discover
 ## Bugs / Feature Requests
 
 Please report any bugs or feature requests by email to `bug-timer-simple at rt.cpan.org`, or through
-the web interface at [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Timer-Simple](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Timer-Simple). You will be automatically notified of any
+the web interface at [https://rt.cpan.org/Public/Bug/Report.html?Queue=Timer-Simple](https://rt.cpan.org/Public/Bug/Report.html?Queue=Timer-Simple). You will be automatically notified of any
 progress on the request by the system.
 
 ## Source Code
@@ -236,9 +234,10 @@ progress on the request by the system.
 
 Randy Stauner <rwstauner@cpan.org>
 
-# CONTRIBUTOR
+# CONTRIBUTORS
 
-Tomohiro Hosaka <bokutin@bokut.in>
+- Tomohiro Hosaka <bokutin@bokut.in>
+- perlancar (@pc-office) <perlancar@gmail.com>
 
 # COPYRIGHT AND LICENSE
 

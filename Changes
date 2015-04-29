@@ -2,6 +2,10 @@ Revision history for Timer-Simple
 
 {{$NEXT}}
 
+1.006     2015-04-29T13:47:13Z
+
+  - Fix pod link.  Thanks to perlancar for the pull request (gh-2).
+
 1.005     2014-02-01T16:59:43Z
 
   - Add 'rps' format to show possible requests per second ('4.743616s (0.211/s)').
