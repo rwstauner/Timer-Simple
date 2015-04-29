@@ -381,7 +381,7 @@ and how they differ from this module:
 =for :list
 * L<Time::Elapse> - eccentric API to a tied scalar
 * L<Time::Progress> - Doesn't support L<Time::HiRes>
-* L<Time::StopWatch> - tied scalar
+* L<Time::Stopwatch> - tied scalar
 * L<Dancer::Timer> - inside Dancer framework
 
 =cut
